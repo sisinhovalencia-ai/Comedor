@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Sabor Marimbero</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+  function cambiarDia(dia, btn) {
+    document.querySelectorAll('.dia-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.dia-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + dia).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</head>
+<body>
+
+<!-- ✅ BURBUJA WHATSAPP FLOTANTE (visible en toda la página) -->
+<a class="wa-float"
+   href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%2C%20me%20gustar%C3%ADa%20hacer%20un%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
+   target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+  Pedir ahora
+</a>
+
+<div class="floating-notes">
+  <span class="note">♪</span><span class="note">♫</span><span class="note">🌿</span><span class="note">♪</span><span class="note">♬</span>
+</div>
+<div class="acento-bar"></div>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <img src="logosinfondo.png" alt="Logo Sabor Marimbero" class="hero-logo">
+  <div class="hero-tagline">
+    <span class="restaurant-label">Restaurant</span>
+    <h1>Sabor<br><em>Marimbero,</em></h1>
+    <p class="subtitulo">— El alma de Esmeraldas en cada bocado —</p>
+    <p class="descripcion">el alma de la cocina esmeraldeña, donde los Verdi Pollo conquistan el paladar.</p>
+  </div>
+  <div class="hero-cta">
+    <a href="#menu" class="btn btn-primary">Ver el Menú</a>
+    <!-- Botón WhatsApp directo desde el Hero -->
+    <a class="btn btn-whatsapp"
+       href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%2C%20quiero%20hacer%20un%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
+       target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Pedir por WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- ===== MENÚ SEMANAL ===== -->
+<div class="menu-bg" id="menu">
+  <div class="menu-inner">
+    <h2 class="menu-title">Menú Semanal</h2>
+    <p class="menu-sub">Cuatro platos especiales cada día, de lunes a viernes</p>
+
+    <div class="dias-tabs">
+      <button class="dia-tab active" onclick="cambiarDia('lunes',this)">Lunes</button>
+      <button class="dia-tab" onclick="cambiarDia('martes',this)">Martes</button>
+      <button class="dia-tab" onclick="cambiarDia('miercoles',this)">Miércoles</button>
+      <button class="dia-tab" onclick="cambiarDia('jueves',this)">Jueves</button>
+      <button class="dia-tab" onclick="cambiarDia('viernes',this)">Viernes</button>
+    </div>
+
+    <div class="dia-panel active" id="panel-lunes">
+      <div class="dia-header"><h3>🌿 Lunes</h3><p>Comenzamos la semana con los sabores del río</p></div>
+      <div class="cards">
+        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>Pollo marinado en hierbas esmeraldeñas con arroz y patacones.</p><div class="precio">$2.50</div></div>
+        <div class="card"><span class="card-emoji">🥘</span><h3>Sopa de Bola Verde</h3><p>Tradicional sopa de relleno con carne, envuelta con amor esmeraldeño.</p><div class="precio">$2.00</div></div>
+        <div class="card"><span class="card-emoji">🐟</span><h3>Pescado Frito</h3><p>Pescado fresco del río frito al punto con yuca y curtido de cebolla.</p><div class="precio">$3.50</div></div>
+        <div class="card"><span class="card-emoji">🌽</span><h3>Caldo de Gallina Criolla</h3><p>Caldo reconfortante de gallina de campo con maíz tierno y hierbas.</p><div class="precio">$2.50</div></div>
+      </div>
+    </div>
+
+    <div class="dia-panel" id="panel-martes">
+      <div class="dia-header"><h3>🌊 Martes</h3><p>Los sabores del mar llegan a tu mesa</p></div>
+      <div class="cards">
+        <div class="card"><span class="card-emoji">🦀</span><h3>Encocado de Cangrejo</h3><p>Cangrejo fresco bañado en leche de coco y especias del litoral.</p><div class="precio">$4.50</div></div>
+        <div class="card"><span class="card-emoji">🍚</span><h3>Arroz con Camarón</h3><p>Arroz cremoso con camarones del Pacífico, ajo y culantro fresco.</p><div class="precio">$3.50</div></div>
+        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>Nuestro plato insignia: pollo en salsa verde con arroz y ensalada.</p><div class="precio">$2.50</div></div>
+        <div class="card"><span class="card-emoji">🥣</span><h3>Sopa de Mariscos</h3><p>Sopa cremosa con mariscos variados, leche de coco y especias.</p><div class="precio">$3.00</div></div>
+      </div>
+    </div>
+
+    <div class="dia-panel" id="panel-miercoles">
+      <div class="dia-header"><h3>🌿 Miércoles</h3><p>Mitad de semana con sabor de abuela</p></div>
+      <div class="cards">
+        <div class="card"><span class="card-emoji">🌿</span><h3>Tapao de Pescado</h3><p>Pescado cocido en hoja de bijao con plátano verde y yuca.</p><div class="precio">$3.50</div></div>
+        <div class="card"><span class="card-emoji">🐖</span><h3>Seco de Cerdo</h3><p>Cerdo tierno estofado en chicha de yuca con patacones y arroz.</p><div class="precio">$3.00</div></div>
+        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>El favorito de siempre, marinado en hierbas y servido con plátano.</p><div class="precio">$2.50</div></div>
+        <div class="card"><span class="card-emoji">🥬</span><h3>Menestra de Lenteja</h3><p>Menestra criolla con arroz, carne asada y plátano maduro.</p><div class="precio">$2.50</div></div>
+      </div>
+    </div>
+
+    <div class="dia-panel" id="panel-jueves">
+      <div class="dia-header"><h3>🎶 Jueves</h3><p>Sabores que danzan al ritmo de la marimba</p></div>
+      <div class="cards">
+        <div class="card"><span class="card-emoji">🦐</span><h3>Encocado de Camarones</h3><p>Camarones jumbo en salsa de coco con arroz y patacones.</p><div class="precio">$4.00</div></div>
+        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>El clásico que nunca falla con todos los acompañamientos.</p><div class="precio">$2.50</div></div>
+        <div class="card"><span class="card-emoji">🥘</span><h3>Sopa de Gallina</h3><p>Caldo espeso de gallina criolla con fideos y verduras frescas.</p><div class="precio">$2.00</div></div>
+        <div class="card"><span class="card-emoji">🐄</span><h3>Seco de Res</h3><p>Carne de res guisada en cerveza negra con yuca y arroz blanco.</p><div class="precio">$3.50</div></div>
+      </div>
+    </div>
+
+    <div class="dia-panel" id="panel-viernes">
+      <div class="dia-header"><h3>🎉 Viernes</h3><p>Cerramos la semana con los mejores platos del mar</p></div>
+      <div class="cards">
+        <div class="card"><span class="card-emoji">🦞</span><h3>Cazuela de Mariscos</h3><p>Langostinos, cangrejo y almejas en crema de coco con arroz.</p><div class="precio">$5.50</div></div>
+        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo Especial</h3><p>Versión especial del viernes con doble porción y salsa extra.</p><div class="precio">$3.50</div></div>
+        <div class="card"><span class="card-emoji">🌮</span><h3>Corvina a la Plancha</h3><p>Corvina fresca con chimichurri esmeraldeño y arroz blanco.</p><div class="precio">$4.50</div></div>
+        <div class="card"><span class="card-emoji">🥘</span><h3>Sancocho Especial</h3><p>Sancocho del viernes con pollo, res y cerdo — todos los tubérculos.</p><div class="precio">$3.00</div></div>
+      </div>
+    </div>
+
+    <!-- Banner WhatsApp al final del menú -->
+    <div class="wa-menu-banner">
+      <p>¿Listo para pedir? Te atendemos directamente por WhatsApp 🍽️</p>
+      <a class="btn btn-whatsapp"
+         href="https://wa.me/593968770724?text=Hola%2C%20vi%20el%20men%C3%BA%20y%20quiero%20hacer%20mi%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
+         target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Hacer mi pedido
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="leaf-divider">🌿 ♪ 🌿</div>
+
+<!-- ===== SOBRE NOSOTROS ===== -->
+<section>
+  <div class="sobre">
+    <div class="sobre-texto">
+      <h2>La Marimba<br>en Cada Plato</h2>
+      <p>En Sabor Marimbero celebramos la riqueza culinaria de Esmeraldas con cada receta que preparamos. Nuestra cocina es un homenaje a las abuelas, a los sabores del río, del mar y de la montaña verde.</p>
+      <p>Cada ingrediente es seleccionado con cuidado, cada plato preparado con el ritmo de la marimba en el corazón. Bienvenidos a nuestra mesa.</p>
+    </div>
+    <div class="sobre-visual">
+      <div class="sobre-box">
+        <span class="big-num">🎶</span>
+        <p style="font-size:1.3rem; font-family:'Playfair Display',serif; margin-top:0.5rem;">Cocina con Alma</p>
+        <div class="stats">
+          <div class="stat-item"><span class="num">+50</span><span>Platos únicos</span></div>
+          <div class="stat-item"><span class="num">100%</span><span>Ingredientes frescos</span></div>
+          <div class="stat-item"><span class="num">∞</span><span>Sabor auténtico</span></div>
+          <div class="stat-item"><span class="num">❤️</span><span>Con amor de Esmeraldas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECCIÓN QR ===== -->
+<div class="qr-section">
+  <h3>📱 Escanea el Menú en tu Mesa</h3>
+  <p>Imprime este QR y ponlo en cada mesa — tus clientes abren el menú al instante</p>
+  <div class="qr-box">
+    <!--
+      ✏️ INSTRUCCIONES PARA GENERAR EL QR:
+      1. Ve a https://qr.io o https://www.qrcode-monkey.com (gratis)
+      2. Pega la URL de tu página (ej: https://sabormarimbero.com)
+      3. Descarga el QR como PNG y reemplaza "qr-menu.png" por el archivo descargado
+      4. Coloca el archivo qr-menu.png en la misma carpeta que este index.html
+    -->
+    <img src="qr-menu.png"
+         alt="Código QR Menú Sabor Marimbero"
+         onerror="this.outerHTML='<div style=\'width:180px;height:180px;background:#f0ead8;border:2px dashed #D4A017;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#5C3317;text-align:center;padding:1rem;\'>Reemplaza con tu QR generado en qr.io</div>'">
+    <span>Menú Digital</span>
+    <small>Sabor Marimbero · Lago Agrio</small>
+  </div>
+</div>
+
+<!-- ===== CONTACTO Y MAPA ===== -->
+<div class="contacto-bg" id="contacto">
+  <h2 class="c-title">Visítanos</h2>
+  <p class="c-sub">Te esperamos con el sabor de Esmeraldas</p>
+
+  <div class="contacto-grid">
+    <!-- Tarjeta WhatsApp especial -->
+    <div class="contacto-item">
+      <span class="icon">💬</span>
+      <h4>WhatsApp</h4>
+      <p>
+        <a href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%21"
+           target="_blank" rel="noopener"
+           style="color:var(--wa);text-decoration:none;font-weight:600;">
+          +593 968 770 724
+        </a>
+      </p>
+    </div>
+    <div class="contacto-item"><span class="icon">📍</span><h4>Dirección</h4><p>Lago Agrio, Ecuador</p></div>
+    <div class="contacto-item"><span class="icon">🕐</span><h4>Horario</h4><p>Lun–Vie<br>10:00 – 19:00</p></div>
+    <div class="contacto-item"><span class="icon">📱</span><h4>Redes</h4><p>@SaborMarimbero</p></div>
+  </div>
+
+  <!-- 🗺️ MAPA GOOGLE MAPS — Lago Agrio, Ecuador -->
+  <!--
+    ✏️ CÓMO PERSONALIZAR EL MAPA:
+    1. Ve a https://www.google.com/maps y busca tu dirección exacta
+    2. Haz clic en "Compartir" → "Insertar un mapa"
+    3. Copia el código del iframe que Google te da
+    4. Pega el src del iframe en el atributo src de abajo (reemplaza la URL)
+  -->
+  <div class="mapa-wrapper">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63778.83796428556!2d-76.92014!3d0.08931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2a6c49e10b42f7%3A0x8efdc03e0e5a7d2b!2sLago%20Agrio%2C%20Ecuador!5e0!3m2!1ses!2sec!4v1700000000000"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Ubicación Sabor Marimbero en Lago Agrio">
+    </iframe>
+  </div>
+</div>
+
+<div class="acento-bar"></div>
+<footer><p>© 2026 <strong>Restaurant Sabor Marimbero</strong> — El alma de Esmeraldas en cada bocado 🌿</p></footer>
+
+<script>
+  // Detecta el día actual al cargar
+  window.addEventListener('DOMContentLoaded', () => {
+    const mapaDias = ['lunes','martes','miercoles','jueves','viernes'];
+    const hoy = mapaDias[new Date().getDay() - 1];
+    if (hoy) {
+      const tabs = document.querySelectorAll('.dia-tab');
+      document.querySelectorAll('.dia-panel').forEach(p => p.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+      const idx = mapaDias.indexOf(hoy);
+      tabs[idx].classList.add('active');
+      document.getElementById('panel-' + hoy).classList.add('active');
+    }
+  });
+</script>
+</body>
+</html>
