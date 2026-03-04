@@ -5,34 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Restaurant Sabor Marimbero</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script>
-  function cambiarDia(dia, btn) {
-    document.querySelectorAll('.dia-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.dia-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('panel-' + dia).classList.add('active');
-    btn.classList.add('active');
-  }
-</script>
+<style>
+:root {
+  --rojo: #8B1A1A; --rojo-vivo: #C0392B; --oro: #D4A017;
+  --verde: #2D6A4F; --crema: #FAF3E0; --cafe: #5C3317; --texto: #2C1A0E;
+  --wa: #25D366; --wa-dark: #128C7E;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--crema); color:var(--texto); font-family:'Crimson Pro',Georgia,serif; overflow-x:hidden; }
+
+/* BARRA ANIMADA */
+.acento-bar { height:8px; background:linear-gradient(90deg,var(--verde),var(--oro),var(--rojo-vivo),var(--oro),var(--verde)); background-size:200% 100%; animation:barraMovil 4s linear infinite; }
+@keyframes barraMovil { 0%{background-position:0%} 100%{background-position:200%} }
+
+/* NOTAS FLOTANTES */
+.floating-notes { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.note { position:absolute; font-size:1.2rem; opacity:0; animation:floatNote 8s ease-in-out infinite; color:var(--oro); }
+.note:nth-child(1){left:5%;animation-delay:0s}
+.note:nth-child(2){left:15%;animation-delay:1.5s}
+.note:nth-child(3){left:80%;animation-delay:3s}
+.note:nth-child(4){left:92%;animation-delay:4.5s}
+.note:nth-child(5){left:50%;animation-delay:6s}
+@keyframes floatNote { 0%{opacity:0;transform:translateY(100vh) rotate(0)} 10%{opacity:.4} 90%{opacity:.4} 100%{opacity:0;transform:translateY(-10vh) rotate(360deg)} }
+
+/* HERO */
+.hero { min-height:100vh; background:radial-gradient(ellipse at 60% 40%,#fff8e7 0%,#f5e6c8 40%,#e8d5a3 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; padding:2rem; }
+.hero::before { content:''; position:absolute; inset:0; background-image:radial-gradient(circle at 10% 20%,rgba(212,160,23,.15) 0%,transparent 40%),radial-gradient(circle at 90% 80%,rgba(139,26,26,.12) 0%,transparent 40%); pointer-events:none; }
+.hero-logo { width:min(300px,75vw); animation:flotar 4s ease-in-out infinite; mix-blend-mode:multiply; filter:drop-shadow(0 16px 36px rgba(139,26,26,.22)); position:relative; z-index:2; }
+@keyframes flotar { 0%,100%{transform:translateY(0) rotate(-.5deg)} 50%{transform:translateY(-12px) rotate(.5deg)} }
+.hero-tagline { margin-top:1.5rem; text-align:center; position:relative; z-index:2; }
+.restaurant-label { font-family:'Dancing Script',cursive; font-size:clamp(1.4rem,4vw,2rem); color:var(--rojo-vivo); display:block; animation:aparecer 1s ease both .3s; }
+.hero-tagline h1 { font-family:'Playfair Display',serif; font-size:clamp(3rem,10vw,6rem); font-weight:900; color:var(--rojo); line-height:.9; text-shadow:3px 3px 0 rgba(212,160,23,.3),6px 6px 0 rgba(139,26,26,.1); animation:aparecer 1s ease both .5s; }
+.hero-tagline h1 em { font-style:italic; color:var(--cafe); }
+.subtitulo { margin-top:1rem; font-size:clamp(.85rem,2.5vw,1rem); font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--verde); animation:aparecer 1s ease both .7s; }
+.descripcion { margin-top:.8rem; font-size:clamp(1rem,3vw,1.3rem); font-style:italic; color:var(--cafe); max-width:480px; animation:aparecer 1s ease both .9s; }
+@keyframes aparecer { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.hero-cta { margin-top:2rem; animation:aparecer 1s ease both 1.1s; }
+.btn-ver { padding:.85rem 2.2rem; font-family:'Crimson Pro',serif; font-size:1.1rem; font-weight:600; border-radius:50px; border:none; cursor:pointer; text-decoration:none; background:var(--rojo); color:var(--crema); box-shadow:0 8px 24px rgba(139,26,26,.35); transition:all .3s; display:inline-block; }
+.btn-ver:hover { background:var(--rojo-vivo); transform:translateY(-3px); }
+
+/* ===== CARRITO FLOTANTE ===== */
+#carrito-flotante {
+  display:none;
+  position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
+  z-index:900;
+  background:var(--rojo); color:var(--crema);
+  font-family:'Crimson Pro',serif; font-size:1.05rem; font-weight:700;
+  padding:.85rem 2rem; border-radius:50px; cursor:pointer; border:none;
+  box-shadow:0 8px 28px rgba(139,26,26,.55); white-space:nowrap;
+  transition:all .3s; animation:carritoUp .4s ease both;
+}
+#carrito-flotante:hover { background:var(--rojo-vivo); transform:translateX(-50%) translateY(-3px); }
+@keyframes carritoUp { from{opacity:0;transform:translateX(-50%) translateY(30px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* ===== PANEL CARRITO ===== */
+#carrito-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:950; backdrop-filter:blur(2px); }
+#carrito-panel {
+  position:fixed; top:0; right:0; width:min(380px,100vw); height:100vh;
+  background:#1a0c06; z-index:960;
+  display:none; flex-direction:column;
+  box-shadow:-8px 0 40px rgba(0,0,0,.5);
+  transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+#carrito-panel.abierto { display:flex; transform:translateX(0); }
+.c-header { padding:1.5rem 1.5rem 1rem; border-bottom:1px solid rgba(212,160,23,.2); display:flex; align-items:center; justify-content:space-between; }
+.c-header h3 { font-family:'Playfair Display',serif; color:var(--oro); font-size:1.4rem; }
+.c-cerrar { background:none; border:none; color:rgba(255,255,255,.5); font-size:1.5rem; cursor:pointer; padding:.2rem .5rem; border-radius:6px; transition:color .2s; line-height:1; }
+.c-cerrar:hover { color:#fff; }
+.c-items { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
+.c-vacio { color:rgba(255,255,255,.4); font-style:italic; text-align:center; padding:2rem 0; }
+.c-item { display:flex; align-items:center; gap:.8rem; padding:.85rem 0; border-bottom:1px solid rgba(255,255,255,.07); }
+.c-emoji { font-size:1.6rem; flex-shrink:0; }
+.c-info { flex:1; }
+.c-nombre { color:var(--crema); font-size:.95rem; font-weight:600; }
+.c-subtotal { color:var(--oro); font-family:'Dancing Script',cursive; font-size:1.1rem; }
+.c-qty { display:flex; align-items:center; gap:.4rem; }
+.c-menos,.c-mas { width:28px; height:28px; border-radius:50%; border:1.5px solid rgba(212,160,23,.5); background:transparent; color:var(--oro); font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.c-menos:hover,.c-mas:hover { background:var(--oro); color:#1a0c06; border-color:var(--oro); }
+.c-num { color:#fff; font-size:.95rem; font-weight:700; min-width:20px; text-align:center; }
+.c-footer { padding:1.2rem 1.5rem 1.5rem; border-top:1px solid rgba(212,160,23,.2); display:flex; flex-direction:column; gap:.8rem; }
+.c-total-row { display:flex; justify-content:space-between; align-items:center; color:#fff; font-size:1.1rem; }
+.c-total-row strong { color:var(--oro); font-family:'Dancing Script',cursive; font-size:1.6rem; }
+.btn-vaciar { background:transparent; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.5); font-family:'Crimson Pro',serif; font-size:.95rem; padding:.6rem; border-radius:10px; cursor:pointer; transition:all .2s; }
+.btn-vaciar:hover { border-color:var(--rojo-vivo); color:var(--rojo-vivo); }
+.btn-enviar { background:var(--wa); color:#fff; border:none; font-family:'Crimson Pro',serif; font-size:1.1rem; font-weight:700; padding:.9rem 1rem; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.6rem; box-shadow:0 6px 20px rgba(37,211,102,.4); transition:all .3s; }
+.btn-enviar:hover { background:var(--wa-dark); transform:translateY(-2px); }
+.btn-enviar svg { flex-shrink:0; }
+
+/* MENÚ */
+.menu-bg { background:linear-gradient(135deg,#2D6A4F 0%,#1B4332 100%); padding:5rem 0 4rem; position:relative; overflow:hidden; }
+.menu-bg::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/svg%3E"); pointer-events:none; }
+.menu-inner { max-width:1100px; margin:0 auto; padding:0 1.5rem; position:relative; z-index:1; }
+.menu-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.5rem); color:var(--oro); text-align:center; margin-bottom:.5rem; }
+.menu-sub { text-align:center; font-style:italic; color:rgba(255,255,255,.75); font-size:1.1rem; margin-bottom:2.5rem; }
+.dias-tabs { display:flex; justify-content:center; gap:.5rem; flex-wrap:wrap; margin-bottom:2.5rem; }
+.dia-tab { padding:.6rem 1.4rem; border-radius:50px; font-family:'Crimson Pro',serif; font-size:1rem; font-weight:600; cursor:pointer; border:2px solid rgba(212,160,23,.4); background:rgba(255,255,255,.06); color:rgba(255,255,255,.7); transition:all .25s; }
+.dia-tab:hover { background:rgba(212,160,23,.15); color:var(--oro); border-color:var(--oro); }
+.dia-tab.active { background:var(--oro); color:#1B4332; border-color:var(--oro); font-weight:700; box-shadow:0 4px 18px rgba(212,160,23,.45); }
+.dia-panel { display:none; }
+.dia-panel.active { display:block; animation:aparecer .4s ease both; }
+.dia-header { text-align:center; margin-bottom:2rem; }
+.dia-header h3 { font-family:'Dancing Script',cursive; font-size:2rem; color:var(--oro); }
+.dia-header p { color:rgba(255,255,255,.6); font-style:italic; font-size:1rem; margin-top:.3rem; }
+
+/* CARDS */
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; }
+.card { background:rgba(255,255,255,.07); border:2px solid rgba(212,160,23,.25); border-radius:20px; padding:1.5rem 1.2rem 1.2rem; text-align:center; backdrop-filter:blur(8px); transition:transform .3s,box-shadow .3s,border-color .3s; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+.card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--oro),var(--rojo-vivo),var(--oro)); opacity:0; transition:opacity .3s; }
+.card:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,.3); }
+.card:hover::after,.card.en-carrito::after { opacity:1; }
+.card.en-carrito { border-color:var(--oro); background:rgba(212,160,23,.13); }
+.card-emoji { font-size:2.5rem; margin-bottom:.6rem; display:block; }
+.card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--crema); margin-bottom:.4rem; }
+.card-desc { color:rgba(255,255,255,.65); font-size:.88rem; line-height:1.5; flex:1; margin-bottom:1rem; }
+.card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+.precio { font-family:'Dancing Script',cursive; font-size:1.5rem; color:var(--oro); }
+.controles { display:flex; align-items:center; gap:.4rem; }
+.btn-m,.btn-p { width:32px; height:32px; border-radius:50%; font-size:1.2rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; line-height:1; }
+.btn-m { border:2px solid rgba(212,160,23,.5); background:transparent; color:rgba(255,255,255,.5); }
+.btn-m:hover { background:rgba(212,160,23,.2); color:var(--oro); }
+.btn-p { border:none; background:var(--oro); color:#1B4332; box-shadow:0 3px 10px rgba(212,160,23,.4); }
+.btn-p:hover { background:#e8b520; transform:scale(1.1); }
+.cant { color:#fff; font-size:1rem; font-weight:700; min-width:22px; text-align:center; }
+
+/* SOBRE */
+.leaf-divider { text-align:center; padding:1rem; font-size:2rem; letter-spacing:.5rem; opacity:.6; }
+section { padding:5rem 1.5rem; max-width:1100px; margin:0 auto; }
+.sobre { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; }
+@media(max-width:700px){.sobre{grid-template-columns:1fr}}
+.sobre-texto h2 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,2.8rem); color:var(--rojo); margin-bottom:1.2rem; line-height:1.2; }
+.sobre-texto p { font-size:1.15rem; line-height:1.9; color:var(--texto); margin-bottom:1rem; }
+.sobre-box { background:linear-gradient(135deg,var(--rojo) 0%,var(--cafe) 100%); border-radius:24px; padding:3rem 2.5rem; color:var(--crema); text-align:center; box-shadow:12px 12px 0 var(--oro); }
+.big-num { font-family:'Playfair Display',serif; font-size:4rem; font-weight:900; color:var(--oro); display:block; line-height:1; }
+.stats { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+.stat-item { background:rgba(255,255,255,.1); border-radius:12px; padding:1.2rem; text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--oro); display:block; }
+.stat-item span:last-child { font-size:.85rem; opacity:.8; }
+
+/* QR */
+.qr-section { background:var(--crema); padding:4rem 1.5rem; text-align:center; }
+.qr-section h3 { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,4vw,2.4rem); color:var(--rojo); margin-bottom:.5rem; }
+.qr-section p { color:var(--cafe); font-size:1.1rem; font-style:italic; margin-bottom:2rem; }
+.qr-box { display:inline-flex; flex-direction:column; align-items:center; gap:1rem; background:#fff; border:3px solid var(--oro); border-radius:24px; padding:2rem 2.5rem; box-shadow:8px 8px 0 rgba(212,160,23,.25); }
+.qr-box img { width:180px; height:180px; border-radius:8px; }
+.qr-box span { font-family:'Dancing Script',cursive; font-size:1.4rem; color:var(--rojo); }
+.qr-box small { color:var(--cafe); font-size:.9rem; opacity:.75; }
+
+/* CONTACTO */
+.contacto-bg { background:linear-gradient(160deg,#2C1A0E 0%,#5C3317 50%,#8B1A1A 100%); padding:5rem 1.5rem 3rem; text-align:center; }
+.c-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.5rem); color:var(--oro); margin-bottom:.5rem; }
+.c-sub { font-style:italic; color:rgba(255,255,255,.7); font-size:1.15rem; margin-bottom:3rem; }
+.contacto-grid { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; max-width:800px; margin:0 auto 3rem; }
+.contacto-item { background:rgba(255,255,255,.08); border:1px solid rgba(212,160,23,.25); border-radius:16px; padding:1.8rem 2rem; min-width:180px; transition:transform .3s; }
+.contacto-item:hover { transform:translateY(-6px); }
+.contacto-item .icon { font-size:2rem; display:block; margin-bottom:.6rem; }
+.contacto-item h4 { font-family:'Playfair Display',serif; color:var(--oro); font-size:1.1rem; margin-bottom:.3rem; }
+.contacto-item p { color:rgba(255,255,255,.75); font-size:.95rem; }
+.mapa-wrapper { max-width:860px; margin:0 auto 2rem; border-radius:20px; overflow:hidden; border:2px solid rgba(212,160,23,.3); box-shadow:0 12px 40px rgba(0,0,0,.4); }
+.mapa-wrapper iframe { display:block; width:100%; height:340px; border:none; }
+footer { background:#1a0c06; text-align:center; padding:2rem; color:rgba(255,255,255,.4); font-size:.9rem; }
+footer strong { color:var(--oro); }
+
+/* WA SVG inline */
+.wa-svg { width:20px; height:20px; fill:#fff; }
+</style>
 </head>
 <body>
 
-<!-- ✅ BURBUJA WHATSAPP FLOTANTE (visible en toda la página) -->
-<a class="wa-float"
-   href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%2C%20me%20gustar%C3%ADa%20hacer%20un%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
-   target="_blank" rel="noopener">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-  Pedir ahora
-</a>
+<!-- CARRITO FLOTANTE -->
+<button id="carrito-flotante" onclick="abrirCarrito()">
+  🛒 <span id="cf-count">0</span> platos &nbsp;·&nbsp; $<span id="cf-total">0.00</span>
+</button>
+
+<!-- OVERLAY -->
+<div id="carrito-overlay" onclick="cerrarCarrito()"></div>
+
+<!-- PANEL CARRITO -->
+<div id="carrito-panel">
+  <div class="c-header">
+    <h3>🛒 Tu Pedido</h3>
+    <button class="c-cerrar" onclick="cerrarCarrito()">✕</button>
+  </div>
+  <div class="c-items" id="c-items">
+    <p class="c-vacio">Aún no agregaste platos 🍽️</p>
+  </div>
+  <div class="c-footer">
+    <div class="c-total-row">
+      <span>Total:</span>
+      <strong id="c-total-panel">$0.00</strong>
+    </div>
+    <button class="btn-vaciar" onclick="vaciarCarrito()">🗑 Vaciar pedido</button>
+    <button class="btn-enviar" onclick="enviarWhatsApp()">
+      <svg class="wa-svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Enviar por WhatsApp
+    </button>
+  </div>
+</div>
 
 <div class="floating-notes">
   <span class="note">♪</span><span class="note">♫</span><span class="note">🌿</span><span class="note">♪</span><span class="note">♬</span>
 </div>
 <div class="acento-bar"></div>
 
-<!-- ===== HERO ===== -->
+<!-- HERO -->
 <div class="hero">
   <img src="logosinfondo.png" alt="Logo Sabor Marimbero" class="hero-logo">
   <div class="hero-tagline">
@@ -42,25 +217,15 @@
     <p class="descripcion">el alma de la cocina esmeraldeña, donde los Verdi Pollo conquistan el paladar.</p>
   </div>
   <div class="hero-cta">
-    <a href="#menu" class="btn btn-primary">Ver el Menú</a>
-    <!-- Botón WhatsApp directo desde el Hero -->
-    <a class="btn btn-whatsapp"
-       href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%2C%20quiero%20hacer%20un%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
-       target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-      </svg>
-      Pedir por WhatsApp
-    </a>
+    <a href="#menu" class="btn-ver">Ver el Menú</a>
   </div>
 </div>
 
-<!-- ===== MENÚ SEMANAL ===== -->
+<!-- MENÚ -->
 <div class="menu-bg" id="menu">
   <div class="menu-inner">
     <h2 class="menu-title">Menú Semanal</h2>
-    <p class="menu-sub">Cuatro platos especiales cada día, de lunes a viernes</p>
-
+    <p class="menu-sub">Elige tus platos y envía tu pedido por WhatsApp 🛒</p>
     <div class="dias-tabs">
       <button class="dia-tab active" onclick="cambiarDia('lunes',this)">Lunes</button>
       <button class="dia-tab" onclick="cambiarDia('martes',this)">Martes</button>
@@ -69,74 +234,174 @@
       <button class="dia-tab" onclick="cambiarDia('viernes',this)">Viernes</button>
     </div>
 
+    <!-- LUNES -->
     <div class="dia-panel active" id="panel-lunes">
       <div class="dia-header"><h3>🌿 Lunes</h3><p>Comenzamos la semana con los sabores del río</p></div>
       <div class="cards">
-        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>Pollo marinado en hierbas esmeraldeñas con arroz y patacones.</p><div class="precio">$2.50</div></div>
-        <div class="card"><span class="card-emoji">🥘</span><h3>Sopa de Bola Verde</h3><p>Tradicional sopa de relleno con carne, envuelta con amor esmeraldeño.</p><div class="precio">$2.00</div></div>
-        <div class="card"><span class="card-emoji">🐟</span><h3>Pescado Frito</h3><p>Pescado fresco del río frito al punto con yuca y curtido de cebolla.</p><div class="precio">$3.50</div></div>
-        <div class="card"><span class="card-emoji">🌽</span><h3>Caldo de Gallina Criolla</h3><p>Caldo reconfortante de gallina de campo con maíz tierno y hierbas.</p><div class="precio">$2.50</div></div>
+        <div class="card">
+          <span class="card-emoji">🍗</span><h3>Verdi Pollo</h3>
+          <p class="card-desc">Pollo marinado en hierbas esmeraldeñas con arroz y patacones.</p>
+          <div class="card-footer">
+            <span class="precio">$2.50</span>
+            <div class="controles">
+              <button class="btn-m" onclick="restar(this)">−</button>
+              <span class="cant">0</span>
+              <button class="btn-p" onclick="sumar(this,'Verdi Pollo',2.50,'🍗')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🥘</span><h3>Sopa de Bola Verde</h3>
+          <p class="card-desc">Tradicional sopa rellena de carne, envuelta con amor esmeraldeño.</p>
+          <div class="card-footer">
+            <span class="precio">$2.00</span>
+            <div class="controles">
+              <button class="btn-m" onclick="restar(this)">−</button>
+              <span class="cant">0</span>
+              <button class="btn-p" onclick="sumar(this,'Sopa de Bola Verde',2.00,'🥘')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🐟</span><h3>Pescado Frito</h3>
+          <p class="card-desc">Pescado fresco del río frito al punto con yuca y curtido de cebolla.</p>
+          <div class="card-footer">
+            <span class="precio">$3.50</span>
+            <div class="controles">
+              <button class="btn-m" onclick="restar(this)">−</button>
+              <span class="cant">0</span>
+              <button class="btn-p" onclick="sumar(this,'Pescado Frito',3.50,'🐟')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🌽</span><h3>Caldo de Gallina Criolla</h3>
+          <p class="card-desc">Caldo reconfortante de gallina de campo con maíz tierno y hierbas.</p>
+          <div class="card-footer">
+            <span class="precio">$2.50</span>
+            <div class="controles">
+              <button class="btn-m" onclick="restar(this)">−</button>
+              <span class="cant">0</span>
+              <button class="btn-p" onclick="sumar(this,'Caldo de Gallina Criolla',2.50,'🌽')">+</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- MARTES -->
     <div class="dia-panel" id="panel-martes">
       <div class="dia-header"><h3>🌊 Martes</h3><p>Los sabores del mar llegan a tu mesa</p></div>
       <div class="cards">
-        <div class="card"><span class="card-emoji">🦀</span><h3>Encocado de Cangrejo</h3><p>Cangrejo fresco bañado en leche de coco y especias del litoral.</p><div class="precio">$4.50</div></div>
-        <div class="card"><span class="card-emoji">🍚</span><h3>Arroz con Camarón</h3><p>Arroz cremoso con camarones del Pacífico, ajo y culantro fresco.</p><div class="precio">$3.50</div></div>
-        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>Nuestro plato insignia: pollo en salsa verde con arroz y ensalada.</p><div class="precio">$2.50</div></div>
-        <div class="card"><span class="card-emoji">🥣</span><h3>Sopa de Mariscos</h3><p>Sopa cremosa con mariscos variados, leche de coco y especias.</p><div class="precio">$3.00</div></div>
+        <div class="card">
+          <span class="card-emoji">🦀</span><h3>Encocado de Cangrejo</h3>
+          <p class="card-desc">Cangrejo fresco bañado en leche de coco y especias del litoral.</p>
+          <div class="card-footer"><span class="precio">$4.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Encocado de Cangrejo',4.50,'🦀')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🍚</span><h3>Arroz con Camarón</h3>
+          <p class="card-desc">Arroz cremoso con camarones del Pacífico, ajo y culantro fresco.</p>
+          <div class="card-footer"><span class="precio">$3.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Arroz con Camarón',3.50,'🍚')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🍗</span><h3>Verdi Pollo</h3>
+          <p class="card-desc">Nuestro plato insignia: pollo en salsa verde con arroz y ensalada.</p>
+          <div class="card-footer"><span class="precio">$2.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Verdi Pollo',2.50,'🍗')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🥣</span><h3>Sopa de Mariscos</h3>
+          <p class="card-desc">Sopa cremosa con mariscos variados, leche de coco y especias.</p>
+          <div class="card-footer"><span class="precio">$3.00</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Sopa de Mariscos',3.00,'🥣')">+</button></div></div>
+        </div>
       </div>
     </div>
 
+    <!-- MIÉRCOLES -->
     <div class="dia-panel" id="panel-miercoles">
       <div class="dia-header"><h3>🌿 Miércoles</h3><p>Mitad de semana con sabor de abuela</p></div>
       <div class="cards">
-        <div class="card"><span class="card-emoji">🌿</span><h3>Tapao de Pescado</h3><p>Pescado cocido en hoja de bijao con plátano verde y yuca.</p><div class="precio">$3.50</div></div>
-        <div class="card"><span class="card-emoji">🐖</span><h3>Seco de Cerdo</h3><p>Cerdo tierno estofado en chicha de yuca con patacones y arroz.</p><div class="precio">$3.00</div></div>
-        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>El favorito de siempre, marinado en hierbas y servido con plátano.</p><div class="precio">$2.50</div></div>
-        <div class="card"><span class="card-emoji">🥬</span><h3>Menestra de Lenteja</h3><p>Menestra criolla con arroz, carne asada y plátano maduro.</p><div class="precio">$2.50</div></div>
+        <div class="card">
+          <span class="card-emoji">🌿</span><h3>Tapao de Pescado</h3>
+          <p class="card-desc">Pescado cocido en hoja de bijao con plátano verde y yuca.</p>
+          <div class="card-footer"><span class="precio">$3.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Tapao de Pescado',3.50,'🌿')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🐖</span><h3>Seco de Cerdo</h3>
+          <p class="card-desc">Cerdo tierno estofado en chicha de yuca con patacones y arroz.</p>
+          <div class="card-footer"><span class="precio">$3.00</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Seco de Cerdo',3.00,'🐖')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🍗</span><h3>Verdi Pollo</h3>
+          <p class="card-desc">El favorito de siempre, marinado en hierbas y servido con plátano.</p>
+          <div class="card-footer"><span class="precio">$2.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Verdi Pollo',2.50,'🍗')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🥬</span><h3>Menestra de Lenteja</h3>
+          <p class="card-desc">Menestra criolla con arroz, carne asada y plátano maduro.</p>
+          <div class="card-footer"><span class="precio">$2.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Menestra de Lenteja',2.50,'🥬')">+</button></div></div>
+        </div>
       </div>
     </div>
 
+    <!-- JUEVES -->
     <div class="dia-panel" id="panel-jueves">
       <div class="dia-header"><h3>🎶 Jueves</h3><p>Sabores que danzan al ritmo de la marimba</p></div>
       <div class="cards">
-        <div class="card"><span class="card-emoji">🦐</span><h3>Encocado de Camarones</h3><p>Camarones jumbo en salsa de coco con arroz y patacones.</p><div class="precio">$4.00</div></div>
-        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo</h3><p>El clásico que nunca falla con todos los acompañamientos.</p><div class="precio">$2.50</div></div>
-        <div class="card"><span class="card-emoji">🥘</span><h3>Sopa de Gallina</h3><p>Caldo espeso de gallina criolla con fideos y verduras frescas.</p><div class="precio">$2.00</div></div>
-        <div class="card"><span class="card-emoji">🐄</span><h3>Seco de Res</h3><p>Carne de res guisada en cerveza negra con yuca y arroz blanco.</p><div class="precio">$3.50</div></div>
+        <div class="card">
+          <span class="card-emoji">🦐</span><h3>Encocado de Camarones</h3>
+          <p class="card-desc">Camarones jumbo en salsa de coco con arroz y patacones.</p>
+          <div class="card-footer"><span class="precio">$4.00</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Encocado de Camarones',4.00,'🦐')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🍗</span><h3>Verdi Pollo</h3>
+          <p class="card-desc">El clásico que nunca falla con todos los acompañamientos.</p>
+          <div class="card-footer"><span class="precio">$2.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Verdi Pollo',2.50,'🍗')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🥘</span><h3>Sopa de Gallina</h3>
+          <p class="card-desc">Caldo espeso de gallina criolla con fideos y verduras frescas.</p>
+          <div class="card-footer"><span class="precio">$2.00</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Sopa de Gallina',2.00,'🥘')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🐄</span><h3>Seco de Res</h3>
+          <p class="card-desc">Carne de res guisada en cerveza negra con yuca y arroz blanco.</p>
+          <div class="card-footer"><span class="precio">$3.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Seco de Res',3.50,'🐄')">+</button></div></div>
+        </div>
       </div>
     </div>
 
+    <!-- VIERNES -->
     <div class="dia-panel" id="panel-viernes">
       <div class="dia-header"><h3>🎉 Viernes</h3><p>Cerramos la semana con los mejores platos del mar</p></div>
       <div class="cards">
-        <div class="card"><span class="card-emoji">🦞</span><h3>Cazuela de Mariscos</h3><p>Langostinos, cangrejo y almejas en crema de coco con arroz.</p><div class="precio">$5.50</div></div>
-        <div class="card"><span class="card-emoji">🍗</span><h3>Verdi Pollo Especial</h3><p>Versión especial del viernes con doble porción y salsa extra.</p><div class="precio">$3.50</div></div>
-        <div class="card"><span class="card-emoji">🌮</span><h3>Corvina a la Plancha</h3><p>Corvina fresca con chimichurri esmeraldeño y arroz blanco.</p><div class="precio">$4.50</div></div>
-        <div class="card"><span class="card-emoji">🥘</span><h3>Sancocho Especial</h3><p>Sancocho del viernes con pollo, res y cerdo — todos los tubérculos.</p><div class="precio">$3.00</div></div>
+        <div class="card">
+          <span class="card-emoji">🦞</span><h3>Cazuela de Mariscos</h3>
+          <p class="card-desc">Langostinos, cangrejo y almejas en crema de coco con arroz.</p>
+          <div class="card-footer"><span class="precio">$5.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Cazuela de Mariscos',5.50,'🦞')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🍗</span><h3>Verdi Pollo Especial</h3>
+          <p class="card-desc">Versión especial del viernes con doble porción y salsa extra.</p>
+          <div class="card-footer"><span class="precio">$3.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Verdi Pollo Especial',3.50,'🍗')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🌮</span><h3>Corvina a la Plancha</h3>
+          <p class="card-desc">Corvina fresca con chimichurri esmeraldeño y arroz blanco.</p>
+          <div class="card-footer"><span class="precio">$4.50</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Corvina a la Plancha',4.50,'🌮')">+</button></div></div>
+        </div>
+        <div class="card">
+          <span class="card-emoji">🥘</span><h3>Sancocho Especial</h3>
+          <p class="card-desc">Sancocho del viernes con pollo, res y cerdo — todos los tubérculos.</p>
+          <div class="card-footer"><span class="precio">$3.00</span><div class="controles"><button class="btn-m" onclick="restar(this)">−</button><span class="cant">0</span><button class="btn-p" onclick="sumar(this,'Sancocho Especial',3.00,'🥘')">+</button></div></div>
+        </div>
       </div>
-    </div>
-
-    <!-- Banner WhatsApp al final del menú -->
-    <div class="wa-menu-banner">
-      <p>¿Listo para pedir? Te atendemos directamente por WhatsApp 🍽️</p>
-      <a class="btn btn-whatsapp"
-         href="https://wa.me/593968770724?text=Hola%2C%20vi%20el%20men%C3%BA%20y%20quiero%20hacer%20mi%20pedido%20%F0%9F%8D%BD%EF%B8%8F"
-         target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-        Hacer mi pedido
-      </a>
     </div>
   </div>
 </div>
 
 <div class="leaf-divider">🌿 ♪ 🌿</div>
 
-<!-- ===== SOBRE NOSOTROS ===== -->
+<!-- SOBRE -->
 <section>
   <div class="sobre">
     <div class="sobre-texto">
@@ -147,77 +412,41 @@
     <div class="sobre-visual">
       <div class="sobre-box">
         <span class="big-num">🎶</span>
-        <p style="font-size:1.3rem; font-family:'Playfair Display',serif; margin-top:0.5rem;">Cocina con Alma</p>
+        <p style="font-size:1.3rem;font-family:'Playfair Display',serif;margin-top:.5rem">Cocina con Alma</p>
         <div class="stats">
-          <div class="stat-item"><span class="num">+50</span><span>Platos únicos</span></div>
-          <div class="stat-item"><span class="num">100%</span><span>Ingredientes frescos</span></div>
-          <div class="stat-item"><span class="num">∞</span><span>Sabor auténtico</span></div>
-          <div class="stat-item"><span class="num">❤️</span><span>Con amor de Esmeraldas</span></div>
+          <div class="stat-item"><span class="stat-num">+50</span><span>Platos únicos</span></div>
+          <div class="stat-item"><span class="stat-num">100%</span><span>Ingredientes frescos</span></div>
+          <div class="stat-item"><span class="stat-num">∞</span><span>Sabor auténtico</span></div>
+          <div class="stat-item"><span class="stat-num">❤️</span><span>Con amor de Esmeraldas</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== SECCIÓN QR ===== -->
+<!-- QR -->
 <div class="qr-section">
   <h3>📱 Escanea el Menú en tu Mesa</h3>
   <p>Imprime este QR y ponlo en cada mesa — tus clientes abren el menú al instante</p>
   <div class="qr-box">
-    <!--
-      ✏️ INSTRUCCIONES PARA GENERAR EL QR:
-      1. Ve a https://qr.io o https://www.qrcode-monkey.com (gratis)
-      2. Pega la URL de tu página (ej: https://sabormarimbero.com)
-      3. Descarga el QR como PNG y reemplaza "qr-menu.png" por el archivo descargado
-      4. Coloca el archivo qr-menu.png en la misma carpeta que este index.html
-    -->
-    <img src="qr-menu.png"
-         alt="Código QR Menú Sabor Marimbero"
-         onerror="this.outerHTML='<div style=\'width:180px;height:180px;background:#f0ead8;border:2px dashed #D4A017;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#5C3317;text-align:center;padding:1rem;\'>Reemplaza con tu QR generado en qr.io</div>'">
+    <img src="qr-menu.png" alt="QR" onerror="this.outerHTML='<div style=\'width:180px;height:180px;background:#f0ead8;border:2px dashed #D4A017;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#5C3317;text-align:center;padding:1rem\'>Genera tu QR en qr.io con la URL de esta página</div>'">
     <span>Menú Digital</span>
     <small>Sabor Marimbero · Lago Agrio</small>
   </div>
 </div>
 
-<!-- ===== CONTACTO Y MAPA ===== -->
+<!-- CONTACTO -->
 <div class="contacto-bg" id="contacto">
   <h2 class="c-title">Visítanos</h2>
   <p class="c-sub">Te esperamos con el sabor de Esmeraldas</p>
-
   <div class="contacto-grid">
-    <!-- Tarjeta WhatsApp especial -->
-    <div class="contacto-item">
-      <span class="icon">💬</span>
-      <h4>WhatsApp</h4>
-      <p>
-        <a href="https://wa.me/593968770724?text=Hola%20Sabor%20Marimbero%21"
-           target="_blank" rel="noopener"
-           style="color:var(--wa);text-decoration:none;font-weight:600;">
-          +593 968 770 724
-        </a>
-      </p>
-    </div>
+    <div class="contacto-item"><span class="icon">💬</span><h4>WhatsApp</h4><p><a href="https://wa.me/593968770724" target="_blank" style="color:#25D366;text-decoration:none;font-weight:600">+593 968 770 724</a></p></div>
     <div class="contacto-item"><span class="icon">📍</span><h4>Dirección</h4><p>Lago Agrio, Ecuador</p></div>
     <div class="contacto-item"><span class="icon">🕐</span><h4>Horario</h4><p>Lun–Vie<br>10:00 – 19:00</p></div>
     <div class="contacto-item"><span class="icon">📱</span><h4>Redes</h4><p>@SaborMarimbero</p></div>
   </div>
-
-  <!-- 🗺️ MAPA GOOGLE MAPS — Lago Agrio, Ecuador -->
-  <!--
-    ✏️ CÓMO PERSONALIZAR EL MAPA:
-    1. Ve a https://www.google.com/maps y busca tu dirección exacta
-    2. Haz clic en "Compartir" → "Insertar un mapa"
-    3. Copia el código del iframe que Google te da
-    4. Pega el src del iframe en el atributo src de abajo (reemplaza la URL)
-  -->
   <div class="mapa-wrapper">
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63778.83796428556!2d-76.92014!3d0.08931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2a6c49e10b42f7%3A0x8efdc03e0e5a7d2b!2sLago%20Agrio%2C%20Ecuador!5e0!3m2!1ses!2sec!4v1700000000000"
-      allowfullscreen=""
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      title="Ubicación Sabor Marimbero en Lago Agrio">
-    </iframe>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63778.83796428556!2d-76.92014!3d0.08931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e2a6c49e10b42f7%3A0x8efdc03e0e5a7d2b!2sLago%20Agrio%2C%20Ecuador!5e0!3m2!1ses!2sec!4v1700000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 </div>
 
@@ -225,19 +454,188 @@
 <footer><p>© 2026 <strong>Restaurant Sabor Marimbero</strong> — El alma de Esmeraldas en cada bocado 🌿</p></footer>
 
 <script>
-  // Detecta el día actual al cargar
-  window.addEventListener('DOMContentLoaded', () => {
-    const mapaDias = ['lunes','martes','miercoles','jueves','viernes'];
-    const hoy = mapaDias[new Date().getDay() - 1];
-    if (hoy) {
-      const tabs = document.querySelectorAll('.dia-tab');
-      document.querySelectorAll('.dia-panel').forEach(p => p.classList.remove('active'));
-      tabs.forEach(t => t.classList.remove('active'));
-      const idx = mapaDias.indexOf(hoy);
-      tabs[idx].classList.add('active');
-      document.getElementById('panel-' + hoy).classList.add('active');
+// =============================================
+// TODO EL JS EN UN SOLO BLOQUE, SIN ARCHIVOS EXTERNOS
+// =============================================
+
+// Estado global del carrito: { nombre: {nombre, precio, emoji, cantidad} }
+var carrito = {};
+
+// ---- TABS DE DÍAS ----
+function cambiarDia(dia, btn) {
+  document.querySelectorAll('.dia-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.dia-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('panel-' + dia).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Activar día actual al cargar
+(function(){
+  var dias = ['lunes','martes','miercoles','jueves','viernes'];
+  var hoy = dias[new Date().getDay() - 1];
+  if (!hoy) return;
+  document.querySelectorAll('.dia-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.dia-tab').forEach(function(t){ t.classList.remove('active'); });
+  var idx = dias.indexOf(hoy);
+  document.querySelectorAll('.dia-tab')[idx].classList.add('active');
+  document.getElementById('panel-' + hoy).classList.add('active');
+})();
+
+// ---- SUMAR plato (botón + en la card) ----
+function sumar(btn, nombre, precio, emoji) {
+  var card = btn.closest('.card');
+  var cantSpan = card.querySelector('.cant');
+  var actual = parseInt(cantSpan.textContent) || 0;
+  actual++;
+  cantSpan.textContent = actual;
+  card.classList.add('en-carrito');
+
+  if (carrito[nombre]) {
+    carrito[nombre].cantidad = actual;
+  } else {
+    carrito[nombre] = { nombre: nombre, precio: precio, emoji: emoji, cantidad: actual };
+  }
+  renderCarrito();
+}
+
+// ---- RESTAR plato (botón - en la card) ----
+function restar(btn) {
+  var card = btn.closest('.card');
+  var cantSpan = card.querySelector('.cant');
+  var actual = parseInt(cantSpan.textContent) || 0;
+  if (actual <= 0) return;
+  actual--;
+  cantSpan.textContent = actual;
+
+  // Buscar qué plato es por el btn-p hermano
+  var btnP = card.querySelector('.btn-p');
+  // Extraemos el nombre del onclick del btn-p
+  var onclickStr = btnP.getAttribute('onclick');
+  var match = onclickStr.match(/sumar\(this,'([^']+)'/);
+  if (!match) return;
+  var nombre = match[1];
+
+  if (actual === 0) {
+    delete carrito[nombre];
+    card.classList.remove('en-carrito');
+  } else {
+    carrito[nombre].cantidad = actual;
+  }
+  renderCarrito();
+}
+
+// ---- CAMBIAR cantidad DESDE EL PANEL ----
+function panelSumar(nombre) {
+  if (!carrito[nombre]) return;
+  carrito[nombre].cantidad++;
+  // Sincronizar card visual
+  sincronizarCard(nombre, carrito[nombre].cantidad);
+  renderCarrito();
+}
+
+function panelRestar(nombre) {
+  if (!carrito[nombre]) return;
+  carrito[nombre].cantidad--;
+  if (carrito[nombre].cantidad <= 0) {
+    sincronizarCard(nombre, 0);
+    delete carrito[nombre];
+  } else {
+    sincronizarCard(nombre, carrito[nombre].cantidad);
+  }
+  renderCarrito();
+}
+
+function sincronizarCard(nombre, qty) {
+  document.querySelectorAll('.card').forEach(function(card) {
+    var btnP = card.querySelector('.btn-p');
+    if (!btnP) return;
+    var onclickStr = btnP.getAttribute('onclick');
+    if (onclickStr && onclickStr.indexOf("'" + nombre + "'") !== -1) {
+      card.querySelector('.cant').textContent = qty;
+      if (qty === 0) card.classList.remove('en-carrito');
+      else card.classList.add('en-carrito');
     }
   });
+}
+
+// ---- RENDER DEL CARRITO ----
+function renderCarrito() {
+  var items = Object.values(carrito);
+  var totalPlatos = items.reduce(function(s,i){ return s + i.cantidad; }, 0);
+  var totalPrecio = items.reduce(function(s,i){ return s + i.precio * i.cantidad; }, 0);
+
+  // Barra flotante
+  var flotante = document.getElementById('carrito-flotante');
+  if (totalPlatos === 0) {
+    flotante.style.display = 'none';
+  } else {
+    flotante.style.display = 'block';
+    document.getElementById('cf-count').textContent = totalPlatos;
+    document.getElementById('cf-total').textContent = totalPrecio.toFixed(2);
+  }
+
+  // Total en panel
+  document.getElementById('c-total-panel').textContent = '$' + totalPrecio.toFixed(2);
+
+  // Ítems del panel
+  var contenedor = document.getElementById('c-items');
+  if (items.length === 0) {
+    contenedor.innerHTML = '<p class="c-vacio">Aún no agregaste platos 🍽️</p>';
+    return;
+  }
+
+  contenedor.innerHTML = items.map(function(item) {
+    var nombreEsc = item.nombre.replace(/'/g, "\\'");
+    return '<div class="c-item">' +
+      '<span class="c-emoji">' + item.emoji + '</span>' +
+      '<div class="c-info">' +
+        '<div class="c-nombre">' + item.nombre + '</div>' +
+        '<div class="c-subtotal">$' + (item.precio * item.cantidad).toFixed(2) + '</div>' +
+      '</div>' +
+      '<div class="c-qty">' +
+        '<button class="c-menos" onclick="panelRestar(\'' + nombreEsc + '\')">−</button>' +
+        '<span class="c-num">' + item.cantidad + '</span>' +
+        '<button class="c-mas" onclick="panelSumar(\'' + nombreEsc + '\')">+</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ---- ABRIR / CERRAR PANEL ----
+function abrirCarrito() {
+  document.getElementById('carrito-panel').classList.add('abierto');
+  document.getElementById('carrito-overlay').style.display = 'block';
+}
+
+function cerrarCarrito() {
+  document.getElementById('carrito-panel').classList.remove('abierto');
+  document.getElementById('carrito-overlay').style.display = 'none';
+}
+
+// ---- VACIAR ----
+function vaciarCarrito() {
+  carrito = {};
+  document.querySelectorAll('.cant').forEach(function(s){ s.textContent = '0'; });
+  document.querySelectorAll('.card').forEach(function(c){ c.classList.remove('en-carrito'); });
+  renderCarrito();
+  cerrarCarrito();
+}
+
+// ---- ENVIAR POR WHATSAPP ----
+function enviarWhatsApp() {
+  var items = Object.values(carrito);
+  if (items.length === 0) {
+    alert('¡Agrega al menos un plato antes de enviar!');
+    return;
+  }
+  var total = items.reduce(function(s,i){ return s + i.precio * i.cantidad; }, 0);
+  var lineas = items.map(function(i){
+    return i.emoji + ' ' + i.nombre + ' x' + i.cantidad + ' — $' + (i.precio * i.cantidad).toFixed(2);
+  }).join('\n');
+
+  var msg = '🍽️ *Pedido - Sabor Marimbero*\n\n' + lineas + '\n\n💰 *Total: $' + total.toFixed(2) + '*\n\n¡Muchas gracias! 🌿';
+  window.open('https://wa.me/593968770724?text=' + encodeURIComponent(msg), '_blank');
+}
 </script>
 </body>
 </html>
